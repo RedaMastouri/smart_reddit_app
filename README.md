@@ -1,6 +1,6 @@
 # smart_reddit_app: Examination of Digital Community Conversations Within Specific Disease States Via Reddit
 
-<img align="center" src="ing/logo.png">
+<img align="center" src="img/logo.png">
 
 ##- **Vision**: 
 Development of a repeatable process for the analysis of Reddit conversations
@@ -53,7 +53,7 @@ Click on the button below to view the code in a Web IDE. Feel free to edit the c
 ## About the authors: 
 
 ##**Reda Mastouri**
-<img align="left" src="ing/reda.png">
+<img align="left" src="img/reda.png =250x250">
 
 Reda Mastouri is Security Data Scientist with a passion for teaching and coaching. | Data Analytics | Machine Learning | Predictive Modeling | Data Visualization | NLP | Network Analytics | Network Security | Ethical Hacking |
 
@@ -62,7 +62,7 @@ Linkedin: https://www.linkedin.com/in/reda-mastouri/
 
 
 ##**Kalyani Pavuluri**
-<img align="left" src="ing/kalyani.jpg">
+<img align="left" src="img/kalyani.jfif =250x250">
 
 Kalyani Pavuluri is Data Scientist having around 8.5 years of experience in design, analysis, development, implementation and maintenance of Python, J2EE applications and open source solutions.
 
