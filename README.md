@@ -52,18 +52,19 @@ Click on the button below to view the code in a Web IDE. Feel free to edit the c
 
 ## About the authors: 
 
-##**Reda Mastouri**
+### Reda Mastouri
 <img align="left" src="img/mastouri.png">
 
 Reda Mastouri is Security Data Scientist with a passion for teaching and coaching. | Data Analytics | Machine Learning | Predictive Modeling | Data Visualization | NLP | Network Analytics | Network Security | Ethical Hacking |
 
 He is knowledgeable and technically certified engineer with 7 years of continued hands-on experience in the implementation, administration and troubleshooting.
-Linkedin: https://www.linkedin.com/in/reda-mastouri/
+
+- Linkedin: https://www.linkedin.com/in/reda-mastouri/
 
 
-##**Kalyani Pavuluri**
+### Kalyani Pavuluri
 <img align="left" src="img/kalyani.png">
 
 Kalyani Pavuluri is Data Scientist having around 8.5 years of experience in design, analysis, development, implementation and maintenance of Python, J2EE applications and open source solutions.
 
-Linkedin: https://www.linkedin.com/in/kalyani-pavuluri-30416519
+- Linkedin: https://www.linkedin.com/in/kalyani-pavuluri-30416519
