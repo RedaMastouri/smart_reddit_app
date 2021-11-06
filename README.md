@@ -1,21 +1,22 @@
-# smart_reddit_app: Examination of Digital Community Conversations Within Specific Disease States Via Reddit
+# Smart_Reddit_App {PatientCom}:
+### Examination of Digital Community Conversations Within Specific Disease States Via Reddit
 
 <img align="center" src="img/logo.png">
 
-##- **Vision**: 
+### - *Vision: 
 Development of a repeatable process for the analysis of Reddit conversations
 within specific condition and/or disease state with applicable threads and subreddit
 threads (subreddits) to potentially inform strategy and content development. Create a
 simplified and repeatable process that does not require the users to be fluent in Reddit.
 
-##- **Issue**: 
+### - *Issue: 
 While Reddit offers robust, open, and community-minded discussions surrounding
 conditions and disease states, Reddit also provides volumes of unstructured and
 unclassified data. The development of a repeatable process – that continues to monitor
 evolving conversations over time – currently requires multiple tools (ex. – tools to scrape
 threads, tools to analyze keyword content, tools to analyze sentiment, etc.).
 
-##- **Method**: 
+### - *Method: 
 
 After identifying priority conditions and/or disease states with active Reddit
 communities (ex. – prostate cancer, breast cancer, HIV, etc.), build relational taxonomy
