@@ -6,11 +6,14 @@
 
 import pandas as pd
 import praw
-from praw_credential import reddit
-
-
-# In[2]:
-
+#from praw_credential import reddit
+#Credential
+#Connecting to the api
+reddit = praw.Reddit(client_id='5PtLw2OXKn8K-lTmDq8WaA',
+    client_secret='jxi9Ob2bO6axkXP_eKKQH4tFO5t9Rg',
+    username='raymastouri',
+    password='M@$t0ur1198700rq',
+    user_agent='PatientCom/0.0.1')
 
 '''
 Dataset creator
@@ -45,19 +48,6 @@ def subreddit_scrapper(subject):
     
     #Returning the dataframe:
     return df
-
-
-# In[3]:
-
-
-'''
-Showcasing cancer dataset
-'''
-cancer = subreddit_scrapper('cancer')
-cancer
-
-
-# In[4]:
 
 
 '''
@@ -97,8 +87,6 @@ def reddit_scrapper(subject):
     return title_comment_dic
 
 
-# In[5]:
-
 
 '''
 Merged with comment
@@ -113,16 +101,10 @@ def merger(subject):
     return df_scrapped
 
 
-# In[6]:
 
 
-merger('cancer')
 
-
-# # Main function
-
-# In[13]:
-
+# Main function
 
 '''
 Main function
@@ -149,19 +131,8 @@ def main(subject):
     return df
 
 
-# In[14]:
-
-
 cancer = main('cancer')
 
-
-# In[15]:
-
-
-cancer
-
-
-# In[ ]:
 
 
 
