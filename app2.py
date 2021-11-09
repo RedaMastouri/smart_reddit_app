@@ -21,6 +21,8 @@ To perform basic and useful NLP task with Streamlit,Spacy,Textblob and Gensim/Su
 import streamlit as st
 import os
 from PIL import Image 
+import warnings
+warnings.filterwarnings("ignore")
 
 #Visualization
 import matplotlib.pyplot as plt 
@@ -48,6 +50,13 @@ from sumy.summarizers.lex_rank import LexRankSummarizer
 #from dataset_milestone1 import datasets: Add all the different diseases 
 import pandas as pd
 cancer = pd.read_csv('dataset/cancer.csv')
+ProstateCancer= ''
+HIV= ''
+heart=''
+Cerebrovascular= ''
+
+
+
 
 #Starting from the top
 st.markdown("# PationCom™")
@@ -221,9 +230,20 @@ def LSASummy(text):
         texto = texto + str(i)
     
     return texto
+#===========================================================================    
+def mywordcloud(dataframe):
+    from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+    import warnings
+    warnings.filterwarnings("ignore")
+    from collections import Counter
+    c = Counter()    
     
+    plt.figure(figsize = (20,20))
+    W_C = WordCloud(min_font_size=3, max_words=3200, width=1600, height=850, stopwords=STOPWORDS).generate(str(" ".join(dataframe.title)))
+    #return plt.imshow(W_C, interpolation='bilinear')
+    return W_C
 
-
+from ldavisualizer import ldavisualizer as lda
 
 #===========================================================================
 
@@ -317,12 +337,64 @@ def main():
 
 
 	# Visualization:   
-	st.subheader("Visualization::")
+	st.subheader("I - 📊 Visualization:")
 	st.markdown('''
     For visualization, click any of the checkboxes to get started.
     ''')   
+	if st.checkbox("Preview the WorldCloud of your sub datasets"):
+		st.subheader("WorldCloud visualization ..")
+
+		summary_options = st.selectbox("Choose dataset:",['Cancer','ProstateCancer', 'HIV', 'heart disease', 'Cerebrovascular disease'])
+		if st.button("Preview"):
+			if summary_options == 'Cancer':
+				summary_result = mywordcloud(cancer)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
+			elif summary_options == 'ProstateCancer':
+				summary_result = mywordcloud(ProstateCancer)
+			elif summary_options == 'HIV':
+				summary_result = mywordcloud(HIV)
+			elif summary_options == 'heart disease':
+				summary_result = mywordcloud(heart)
+			elif summary_options == 'Cerebrovascular disease':
+				summary_result = mywordcloud(Cerebrovascular)
+			else:
+				st.warning("Using Default Summarizer")
+				st.text("Using Cancer Dataset ..")
+				summary_result = summarize(message)
+			st.success(summary_result)
     
-	st.subheader("Advanced NLP ML:")
+	if st.checkbox("Preview the Latent Dirichlet Allocation (LDA) topics graphs per datasets .."):
+		st.subheader("Topics visualization ..")
+
+		summary_options = st.selectbox("Choose dataset:",['Cancer','ProstateCancer', 'HIV', 'heart disease', 'Cerebrovascular disease'])
+		if st.button("Preview"):
+			if summary_options == 'Cancer':
+				summary_result = lda(cancer.comments)
+				#st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
+			elif summary_options == 'ProstateCancer':
+				summary_result = mywordcloud(ProstateCancer)
+			elif summary_options == 'HIV':
+				summary_result = mywordcloud(HIV)
+			elif summary_options == 'heart disease':
+				summary_result = mywordcloud(heart)
+			elif summary_options == 'Cerebrovascular disease':
+				summary_result = mywordcloud(Cerebrovascular)
+			else:
+				st.warning("Using Default Summarizer")
+				st.text("Using Cancer Dataset ..")
+				summary_result = summarize(message)
+			st.success(summary_result)    
+
+    
+	st.subheader("II - 🧪 Advanced NLP ML:")
 	st.markdown('''
     For NLP deep diving, click any of the checkboxes to get started.
     ''')   
@@ -361,13 +433,13 @@ def main():
 	#Sentiment Analysis
 	if st.checkbox("Sentiment Analysis: Get the Sentiment Score of your text"):
 		#Creating graph for sentiment across each sentence in the text inputted
-		text = st.text_area("Enter Text",placeholder)
-		sents = sent_tokenize(text) #tokenizing the text data into a list of sentences
-		entireText = TextBlob(text) #storing the entire text in one string
+		risala = st.text_area("Type a text",placeholder)
+		sents = sent_tokenize(risala) #tokenizing the text data into a list of sentences
+		entireText = TextBlob(risala) #storing the entire text in one string
 		sentScores = [] #storing sentences in a list to plot
 		for sent in sents:
-			text = TextBlob(sent) #sentiment for each sentence
-			score = text.sentiment[0] #extracting polarity of each sentence
+			memo = TextBlob(sent) #sentiment for each sentence
+			score = memo.sentiment[0] #extracting polarity of each sentence
 			sentScores.append(score) 
 
 		#Plotting sentiment scores per sentencein line graph
@@ -398,7 +470,17 @@ def main():
 			nlp_result = text_analyzer(message)
 			st.json(nlp_result)
 
-
+	# Comment Generation
+	st.subheader("III - 🔬 Comment Generation:")
+	st.markdown('''
+    For comment generation, based on the subjectivity reslting from sentiment analysis, click any of the checkboxes to get started.
+    ''')      
+	if st.checkbox("Click here to select the reddit topic:"):
+		message_to_gen = st.text_area("Enter Text","Type something ..")
+		st.text("Generated comment is:")
+		summary_result = gptSummarizer(message_to_gen)
+		st.success(summary_result)        
+        
 	# Sidebar
 	st.sidebar.subheader("About the App")
 	logobottom=Image.open('img/logo.png')
