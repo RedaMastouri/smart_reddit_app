@@ -100,7 +100,6 @@ msal-extensions==0.2.2
 msrest==0.6.21
 msrestazure==0.6.4
 multitasking==0.0.9
-munkres==1.1.4
 navigator-updater==0.2.1
 nbimporter==0.3.4
 ndg-httpsclient==0.5.1
