@@ -12,7 +12,6 @@ dataclasses==0.6
 distro==1.6.0
 folium==0.12.1
 gensim==4.1.2
-graphviz==0.16
 nnkcde==0.3
 nose==1.3.7
 numpy==1.21.4
