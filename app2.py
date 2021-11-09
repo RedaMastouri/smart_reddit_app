@@ -19,6 +19,8 @@ To perform basic and useful NLP task with Streamlit,Spacy,Textblob and Gensim/Su
 """
 # Core Pkgs
 import streamlit as st
+#from streamlit import components
+import streamlit.components.v1 as components
 import os
 from PIL import Image 
 import warnings
@@ -42,18 +44,31 @@ from gensim.summarization.summarizer import summarize
 import nltk
 from nltk.tokenize import sent_tokenize
 nltk.download('punkt')
+# Gensim
+import gensim
+import gensim.corpora as corpora
+from gensim.utils import simple_preprocess
+from gensim.models import CoherenceModel, LdaModel, LsiModel, HdpModel
+
+# Plotting tools
+import pyLDAvis
+#import pyLDAvis.gensim 
+import pyLDAvis.gensim_models
 
 # Sumy Summary Pkg
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
+
+
 #from dataset_milestone1 import datasets: Add all the different diseases 
 import pandas as pd
-cancer = pd.read_csv('dataset/cancer.csv')
-ProstateCancer= ''
-HIV= ''
-heart=''
+
 Cerebrovascular= ''
+cancer = pd.read_csv('dataset/cancer.csv')
+HIV = pd.read_csv('dataset/HIV_dataset.csv')
+ProstateCancer = pd.read_csv('dataset/Prostate_cancer_dataset.csv')
+heart = pd.read_csv('dataset/Prostate_cancer_dataset.csv')
 
 
 
@@ -243,8 +258,506 @@ def mywordcloud(dataframe):
     #return plt.imshow(W_C, interpolation='bilinear')
     return W_C
 
-from ldavisualizer import ldavisualizer as lda
 
+#LDA
+def ldavisualizer(dataset):
+    #librairies
+    import warnings
+    warnings.filterwarnings("ignore")
+    # Run in python console
+    import nltk; 
+    nltk.download('stopwords')
+
+    # Gensim
+    '''
+    NLP Librairies
+    '''
+    # Gensim
+    import gensim
+    import gensim.corpora as corpora
+    from gensim.utils import simple_preprocess
+    from gensim.models import CoherenceModel, LdaModel, LsiModel, HdpModel
+
+    # spacy for lemmatization
+    import spacy
+
+    # Plotting tools
+    import pyLDAvis
+    #import pyLDAvis.gensim 
+    import pyLDAvis.gensim_models
+    import matplotlib.pyplot as plt
+
+    # Enable logging for gensim - optional
+    import logging
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.ERROR)
+
+    import warnings
+    warnings.filterwarnings("ignore",category=DeprecationWarning)
+    
+    #Body pkgs
+    def sent_to_words(sentences):
+        for sentence in sentences:
+            yield(gensim.utils.simple_preprocess(str(sentence), deacc=True))
+    
+    #wordings
+    df_words = list(sent_to_words(dataset))
+    
+    # Build the bigram and trigram models
+
+    bigram = gensim.models.Phrases(df_words, min_count=5, threshold=100) # higher threshold fewer phrases.
+    trigram = gensim.models.Phrases(bigram[df_words], threshold=100)  
+
+    # Faster way to get a sentence clubbed as a trigram/bigram
+
+    bigram_mod = gensim.models.phrases.Phraser(bigram)
+    trigram_mod = gensim.models.phrases.Phraser(trigram)
+    
+
+    
+    #remove stop words
+    def remove_stopwords(texts):
+        return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
+    def make_bigrams(texts):
+        return [bigram_mod[doc] for doc in texts]
+
+    def make_trigrams(texts):
+        return [trigram_mod[bigram_mod[doc]] for doc in texts]
+
+    def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+        texts_out = []
+        for sent in texts:
+            doc = nlp(" ".join(sent)) 
+            texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
+        return texts_out
+    # NLTK Stop words
+
+    from nltk.corpus import stopwords
+    stop_words = stopwords.words('english')
+    stop_words.extend(['from', 'subject', 're', 'edu', 'use','a','about', 'above', 'across'])
+    
+    st1= ['after', 'afterwards','again','against', 'all', 'almost','alone','along',
+           'already',
+           'also',
+           'although',
+           'always',
+           'am',
+           'among',
+           'amongst',
+           'amoungst',
+           'amount',
+           'an',
+           'and',
+           'another',
+           'any',
+           'anyhow',
+           'anyone',
+           'anything',
+           'anyway',
+           'anywhere',
+           'are',
+           'around',
+           'as',
+           'at',
+           'back',
+           'be',
+           'became',
+           'because',
+           'become',
+           'becomes',
+           'becoming',
+           'been',
+           'before',
+           'beforehand',
+           'behind',
+           'being',
+           'below',
+           'beside',
+           'besides',
+           'between',
+           'beyond',
+           'bill',
+           'both',
+           'bottom',
+           'but',
+           'by',
+           'call',
+           'can',
+           'cannot',
+           'cant',
+           'co',
+           'con',
+           'could',
+           'couldnt',
+           'cry',
+           'de',
+           'describe',
+           'detail',
+           'do',
+           'done',
+           'down',
+           'due',
+           'during',
+           'each',
+           'eg',
+           'eight',
+           'either',
+           'eleven',
+           'else',
+           'elsewhere',
+           'empty',
+           'enough',
+           'etc',
+           'even',
+           'ever',
+           'every',
+           'everyone',
+           'everything',
+           'everywhere',
+           'except',
+           'few',
+           'fifteen',
+           'fifty',
+           'fill',
+           'find',
+           'fire',
+           'first',
+           'five',
+           'for',
+           'former',
+           'formerly',
+           'forty',
+           'found',
+           'four',
+           'from',
+           'front',
+           'full',
+           'further',
+           'get',
+           'give',
+           'go',
+           'had',
+           'has',
+           'hasnt',
+           'have',
+           'he',
+           'hence',
+           'her',
+           'here',
+           'hereafter',
+           'hereby',
+           'herein',
+           'hereupon',
+           'hers',
+           'herself',
+           'him',
+           'himself',
+           'his',
+           'how',
+           'however',
+           'hundred',
+           'i',
+           'ie',
+           'if',
+           'in',
+           'inc',
+           'indeed',
+           'interest',
+           'into',
+           'is',
+           'it',
+           'its',
+           'itself',
+           'keep',
+           'last',
+           'latter',
+           'latterly',
+           'least',
+           'less',
+           'ltd',
+           'made',
+           'many',
+           'may',
+           'me',
+           'meanwhile',
+           'might',
+           'mill',
+           'mine',
+           'more',
+           'moreover',
+           'most',
+           'mostly',
+           'move',
+           'much',
+           'must',
+           'my',
+           'myself',
+           'name',
+           'namely',
+           'neither',
+           'never',
+           'nevertheless',
+           'next',
+           'nine',
+           'no',
+           'nobody',
+           'none',
+           'noone',
+           'nor',
+           'not',
+           'nothing',
+           'now',
+           'nowhere',
+           'of',
+           'off',
+           'often',
+           'on',
+           'once',
+           'one',
+           'only',
+           'onto',
+           'or',
+           'other',
+           'others',
+           'otherwise',
+           'our',
+           'ours',
+           'ourselves',
+           'out',
+           'over',
+           'own',
+           'part',
+           'per',
+           'perhaps',
+           'please',
+           'put',
+           'rather',
+           're',
+           'same',
+           'see',
+           'seem',
+           'seemed',
+           'seeming',
+           'seems',
+           'serious',
+           'several',
+           'she',
+           'should',
+           'show',
+           'side',
+           'since',
+           'sincere',
+           'six',
+           'sixty',
+           'so',
+           'some',
+           'somehow',
+           'someone',
+           'something',
+           'sometime',
+           'sometimes',
+           'somewhere',
+           'still',
+           'such',
+           'system',
+           'take',
+           'ten',
+           'than',
+           'that',
+           'the',
+           'their',
+           'them',
+           'themselves',
+           'then',
+           'thence',
+           'there',
+           'thereafter',
+           'thereby',
+           'therefore',
+           'therein',
+           'thereupon',
+           'these',
+           'they',
+           'thick',
+           'thin',
+           'third',
+           'this',
+           'those',
+           'though',
+           'three',
+           'through',
+           'throughout',
+           'thru',
+           'thus',
+           'to',
+           'together',
+           'too',
+           'top',
+           'toward',
+           'towards',
+           'twelve',
+           'twenty',
+           'two',
+           'un',
+           'under',
+           'until',
+           'up',
+           'upon',
+           'us',
+           'very',
+           'via',
+           'was',
+           'we',
+           'well',
+           'were',
+           'what',
+           'whatever',
+           'when',
+           'whence',
+           'whenever',
+           'where',
+           'whereafter',
+           'whereas',
+           'whereby',
+           'wherein',
+           'whereupon',
+           'wherever',
+           'whether',
+           'which',
+           'while',
+           'whither',
+           'who',
+           'whoever',
+           'whole',
+           'whom',
+           'whose',
+           'why',
+           'will',
+           'with',
+           'within',
+           'without',
+           'would',
+           'yet',
+           'you',
+           'your',
+           'yours',
+           'yourself',
+           'yourselves']
+    
+    stop_words.extend(st1)
+    # Remove Stop Words
+    data_words_nostops = remove_stopwords(df_words)
+    # Form Bigrams
+    data_words_bigrams = make_bigrams(data_words_nostops)
+    nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
+    data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+   # Create Dictionary
+    id2word = corpora.Dictionary(data_lemmatized)
+    # Create Corpus
+    texts = data_lemmatized
+    # Term Document Frequency
+    corpus = [id2word.doc2bow(text) for text in texts]
+
+    lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
+                                           id2word=id2word,
+                                           num_topics=5, 
+                                           random_state=100,
+                                           update_every=1,
+                                           chunksize=100,
+                                           passes=10,
+                                           alpha='auto',
+                                           per_word_topics=True)
+    
+    # Compute Perplexity
+
+    #print('\nPerplexity: ', lda_model.log_perplexity(corpus)) 
+
+    # Compute Coherence Score
+
+    coherence_model_lda = CoherenceModel(model=lda_model, texts=data_lemmatized, dictionary=id2word, coherence='c_v')
+    coherence_lda = coherence_model_lda.get_coherence()
+    #print('\nCoherence Score: ', coherence_lda)
+    
+    pyLDAvis.enable_notebook()
+    panel = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word, mds='tsne', sort_topics=True)
+    #topic_data =  pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word, mds = 'tsne', sort_topics=True)
+    return panel
+
+
+
+#Scattertext
+
+def scattertextplot(convention_df):
+    #librairies
+    import scattertext as st
+    import re, io
+    from pprint import pprint
+    import pandas as pd
+    import numpy as np
+    import spacy
+    from scipy.stats import rankdata, hmean, norm
+    import os, pkgutil, json, urllib
+    from urllib.request import urlopen
+    from IPython.display import IFrame
+    from IPython.core.display import display, HTML
+    from scattertext import CorpusFromPandas, produce_scattertext_explorer
+    display(HTML("<style>.container { height:100%!important; width:100% !important; }</style>"))
+    
+    #NLP
+    from spacy.lang.en import English
+
+    raw_text = 'Hello, world. Here are two sentences.'
+    nlp = English()
+    nlp.add_pipe('sentencizer')
+    doc = nlp(raw_text)
+    
+    convention_df.groupby('comments').apply(lambda x: x.comments.apply(lambda x: len(x.split())).sum())
+    convention_df['parsed'] = convention_df.title.apply(nlp)
+    
+    #Corpus
+    corpus = st.CorpusFromParsedDocuments(convention_df, category_col='title', parsed_col='parsed').build()
+    
+    #Stats
+    term_freq_df = corpus.get_term_freq_df()
+    term_freq_df['cure_precision'] = term_freq_df['CANCER FREE!! freq'] * 1./(term_freq_df['It’s over freq'] + term_freq_df['Goodbye my sweet angel. I Lost my 5 year old daughter last night to complications from the treatment for stage IV alveolar rhabdomyosarcoma. No more tubes, no more pokes, no more drugs making her feel sick. No more pain. freq'])
+    term_freq_df['cure_recall'] = term_freq_df['Officially 12 months cancer free freq'] * 1./term_freq_df['My initial prognosis was, "a few months". I recently celebrated my 3rd post diagnosis birthday! freq'].sum()
+    term_freq_df['cure_f_score'] = term_freq_df.apply(lambda x: (hmean([x['cure_precision'], x['cure_recall']])
+                                                                       if x['cure_precision'] > 0 and x['cure_recall'] > 0 
+                                                                       else 0), axis=1)     
+    #precision and recall
+    term_freq_df['cure_precision_pctl'] = rankdata(term_freq_df['cure_precision'])*1./len(term_freq_df)
+    term_freq_df['cure_recall_pctl'] = rankdata(term_freq_df['cure_recall'])*1./len(term_freq_df)
+    
+    #Normalizing 
+    def normcdf(x):
+        return norm.cdf(x, x.mean(), x.std())
+    
+    #calc
+    term_freq_df['cure_precision_normcdf'] = normcdf(term_freq_df['cure_precision'])
+    term_freq_df['cure_recall_normcdf'] = normcdf(term_freq_df['cure_recall'])
+    
+    #Override
+    term_freq_df['cure_precision_normcdf'].fillna(5)
+    
+    #Cure
+    term_freq_df['dem_corner_score'] = corpus.get_rudder_scores('cure')
+    
+    #HTML
+    html = produce_scattertext_explorer(corpus,
+                                        category='cure',
+                                        category_name='cure',
+                                        not_category_name='disease',
+                                        width_in_pixels=1000,
+                                        minimum_term_frequency=5,
+
+                                        pmi_filter_thresold=4,
+                                        metadata=convention_df['comments'],
+                                        term_significance = st.LogOddsRatioUninformativeDirichletPrior())
+    file_name = 'dataset/diseaseScatterWording.html'
+    open(file_name, 'wb').write(html.encode('utf-8'))
+    page = IFrame(src=file_name, width = 1200, height=2700)
+    
+    return page
+    
 #===========================================================================
 
 
@@ -355,30 +868,60 @@ def main():
 				st.pyplot()
 			elif summary_options == 'ProstateCancer':
 				summary_result = mywordcloud(ProstateCancer)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
 			elif summary_options == 'HIV':
 				summary_result = mywordcloud(HIV)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
 			elif summary_options == 'heart disease':
 				summary_result = mywordcloud(heart)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
 			elif summary_options == 'Cerebrovascular disease':
 				summary_result = mywordcloud(Cerebrovascular)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
 			else:
 				st.warning("Using Default Summarizer")
 				st.text("Using Cancer Dataset ..")
-				summary_result = summarize(message)
+				summary_result = mywordcloud(cancer)
+				st.set_option('deprecation.showPyplotGlobalUse', False)
+				plt.imshow(summary_result, interpolation='bilinear')
+				plt.axis("off")
+				plt.show()
+				st.pyplot()
 			st.success(summary_result)
     
 	if st.checkbox("Preview the Latent Dirichlet Allocation (LDA) topics graphs per datasets .."):
 		st.subheader("Topics visualization ..")
 
-		summary_options = st.selectbox("Choose dataset:",['Cancer','ProstateCancer', 'HIV', 'heart disease', 'Cerebrovascular disease'])
-		if st.button("Preview"):
+		summary_options = st.selectbox("Pick a dataset:",['Cancer','ProstateCancer', 'HIV', 'heart disease', 'Cerebrovascular disease'])
+		if st.button("Showcase now"):
 			if summary_options == 'Cancer':
-				summary_result = lda(cancer.comments)
+				panel = ldavisualizer(cancer.comments)
 				#st.set_option('deprecation.showPyplotGlobalUse', False)
-				plt.imshow(summary_result, interpolation='bilinear')
-				plt.axis("off")
-				plt.show()
-				st.pyplot()
+				#pyLDAvis.display(panel)
+				#html_string = pyLDAvis.prepared_data_to_html(prepared_pyLDAvis_data)
+				#components.v1.html(diplo_string, width=1300, height=800, scrolling=True)
+                				
+				summary_result = pyLDAvis.display(panel)
+				#plt.imshow(summary_result)
+				#plt.axis("off")
+				#plt.show()
+				#st.pyplot()
 			elif summary_options == 'ProstateCancer':
 				summary_result = mywordcloud(ProstateCancer)
 			elif summary_options == 'HIV':
@@ -393,6 +936,39 @@ def main():
 				summary_result = summarize(message)
 			st.success(summary_result)    
 
+	if st.checkbox("Preview the ScatterText per datasets .."):
+		st.subheader("Scatter Keywords per Comments --  visualization ..")
+
+		summary_options = st.selectbox("Search a dataset:",['Cancer','ProstateCancer', 'HIV', 'heart disease', 'Cerebrovascular disease'])
+		if st.button("Give it a try"):
+			if summary_options == 'Cancer':
+				page = scattertextplot(cancer)
+				summary_result = page
+				st.text("Voila .. ")
+
+				HtmlFile = open("dataset/diseaseScatterWording.html", 'r', encoding='utf-8')
+				source_code = HtmlFile.read() 
+				#print(source_code)
+				components.html(source_code)
+               
+				                
+				#plt.imshow(summary_result)
+				#plt.axis("off")
+				#plt.show()
+				#st.pyplot()
+			elif summary_options == 'ProstateCancer':
+				summary_result = mywordcloud(ProstateCancer)
+			elif summary_options == 'HIV':
+				summary_result = mywordcloud(HIV)
+			elif summary_options == 'heart disease':
+				summary_result = mywordcloud(heart)
+			elif summary_options == 'Cerebrovascular disease':
+				summary_result = mywordcloud(Cerebrovascular)
+			else:
+				st.warning("Using Default Summarizer")
+				st.text("Using Cancer Dataset ..")
+				summary_result = summarize(message)
+			st.success(summary_result)   
     
 	st.subheader("II - 🧪 Advanced NLP ML:")
 	st.markdown('''
