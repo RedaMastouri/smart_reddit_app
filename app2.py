@@ -38,16 +38,18 @@ from textblob import TextBlob
 import spacy
 from gensim.summarization.summarizer import summarize
 import nltk
+from nltk.tokenize import sent_tokenize
 nltk.download('punkt')
 
 # Sumy Summary Pkg
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
-#from dataset_milestone1 import df
-#from cancer_dataset import cancer as df
+#from dataset_milestone1 import datasets: Add all the different diseases 
+import pandas as pd
+cancer = pd.read_csv('dataset/cancer.csv')
 
-#DATA_URL = df
+#Starting from the top
 st.markdown("# PationCom™")
 st.markdown("By Reda Mastouri & Kalyani Pavuluri")
 original_title = '<p style="color:Orange; font-size: 30px;">Examination of Digital Community Conversations Within Specific Disease States Via Reddit</p>'
@@ -103,7 +105,7 @@ def gptSummarizer(text):
     import os
     import openai
 
-    openai.api_key = "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"
+    openai.api_key = gpt3token
 
     response = openai.Completion.create(
       engine="davinci-instruct-beta",
@@ -269,11 +271,61 @@ def main():
 
         + As a result, we require a faster, more intelligent, and more accurate sentiment analyzer and web scrapper-based engine capable of tracking the latest trends on novel diseases, as well as any conversational "lexicon."
         
-        + This will serve as a social indicator, providing a collection of use cases for healthcare companies to sensitize consumers through various mediums, communications, and programs to learn about either polemics or significant takeaways from what is happening in social media.
-        
-        Click any of the checkboxes to get started.
+        + This will serve as a social indicator, providing a collection of use cases for healthcare companies to sensitize consumers through various mediums, communications, and programs to learn about either polemics or significant takeaways from what is happening in social media..
     	''')
+	# DatSet:
+	st.subheader("A quick look at the dataset:")
+	st.markdown('''
+    To preview the datset, please check below.
+    ''')
+	st.sidebar.markdown("## Side Panel")
+	st.sidebar.markdown("Use this panel to explore the dataset and create own viz.")
+	st.header("Now, Explore Yourself the Time Series Dataset")
+	# Create a text element and let the reader know the data is loading.
+	data_load_state = st.text('Loading disease dataset...')
 
+	# Notify the reader that the data was successfully loaded.
+	data_load_state.text('Loading diseases dataset...Completed!')
+	bot=Image.open('img/bot.png')
+	st.image(bot,width=150)   	
+    # Showing the original raw data
+	if st.checkbox("Show Raw Data", False):
+		st.subheader('Raw data')
+		st.write(cancer)
+        
+        
+	st.title('Quick  Explore')
+	st.sidebar.subheader(' Quick  Explore')
+	st.markdown("Tick the box on the side panel to explore the dataset.")
+
+
+	if st.sidebar.checkbox('Basic info'):
+		if st.sidebar.checkbox('Quick Look'):
+			st.subheader('Dataset Quick Look:')
+			st.write(cancer.head())
+		if st.sidebar.checkbox("Show Columns"):
+			st.subheader('Show Columns List')
+			all_columns = cancer.columns.to_list()
+			st.write(all_columns)
+       
+		if st.sidebar.checkbox('Statistical Description'):
+			st.subheader('Statistical Data Descripition')
+			st.write(cancer.describe())
+		if st.sidebar.checkbox('Missing Values?'):
+			st.subheader('Missing values')
+			st.write(cancer.isnull().sum())
+
+
+	# Visualization:   
+	st.subheader("Visualization::")
+	st.markdown('''
+    For visualization, click any of the checkboxes to get started.
+    ''')   
+    
+	st.subheader("Advanced NLP ML:")
+	st.markdown('''
+    For NLP deep diving, click any of the checkboxes to get started.
+    ''')   
 	# Summarization
 	if st.checkbox("Get the summary of your text"):
 		st.subheader("Summarize Your Text")
@@ -305,16 +357,28 @@ def main():
 				summary_result = summarize(message)
 			st.success(summary_result)
 
-	# Sentiment Analysis
-	if st.checkbox("Get the Sentiment Score of your text"):
-		st.subheader("Identify Sentiment in your Text")
 
-		message = st.text_area("Enter Text",placeholder)
-		#message = st.text_area(placeholder)
-		if st.button("Analyze"):
-			blob = TextBlob(message)
-			result_sentiment = blob.sentiment
-			st.success(result_sentiment)
+	#Sentiment Analysis
+	if st.checkbox("Sentiment Analysis: Get the Sentiment Score of your text"):
+		#Creating graph for sentiment across each sentence in the text inputted
+		text = st.text_area("Enter Text",placeholder)
+		sents = sent_tokenize(text) #tokenizing the text data into a list of sentences
+		entireText = TextBlob(text) #storing the entire text in one string
+		sentScores = [] #storing sentences in a list to plot
+		for sent in sents:
+			text = TextBlob(sent) #sentiment for each sentence
+			score = text.sentiment[0] #extracting polarity of each sentence
+			sentScores.append(score) 
+
+		#Plotting sentiment scores per sentencein line graph
+		st.line_chart(sentScores) #using line_chart st call to plot polarity for each sentence
+        
+		#Polarity and Subjectivity of the entire text inputted
+		sentimentTotal = entireText.sentiment
+		st.write("The sentiment of the overall text below.")
+		st.write(sentimentTotal)
+
+        
 
 	# Entity Extraction
 	if st.checkbox("Get the Named Entities of your text"):
@@ -344,7 +408,6 @@ def main():
 	st.sidebar.markdown("[Data Source API](https://praw.readthedocs.io/en/stable/")
 	st.sidebar.info("Linkedin [Reda Mastouri](https://www.linkedin.com/in/reda-mastouri/) ")
 	st.sidebar.info("Linkedin [Kalyani Pavuluri](https://www.linkedin.com/in/kalyani-pavuluri-30416519) ")
-	st.sidebar.info("Self Exploratory Visualization using Optimal Transport on Financial Time Series Data- Brought To you By [Jospeh Bunster](https://github.com/Joseph-Bunster)  ")
 	st.sidebar.text("PationCom™ - Copyright © 2021")
 
 
