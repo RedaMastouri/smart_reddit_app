@@ -91,7 +91,7 @@ LunarCalendar==0.0.9
 lxml==4.6.3
 Mako==1.1.5
 Markdown==3.3.4
-matplotlib==3.4.3
+matplotlib
 navigator-updater==0.2.1
 nbimporter==0.3.4
 ndg-httpsclient==0.5.1
