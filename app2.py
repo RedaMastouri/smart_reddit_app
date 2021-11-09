@@ -74,7 +74,7 @@ heart = pd.read_csv('dataset/Prostate_cancer_dataset.csv')
 
 
 #Starting from the top
-st.markdown("# PationCom™")
+st.markdown("# PatientCom™")
 st.markdown("By Reda Mastouri & Kalyani Pavuluri")
 original_title = '<p style="color:Orange; font-size: 30px;">Examination of Digital Community Conversations Within Specific Disease States Via Reddit</p>'
 st.markdown(original_title, unsafe_allow_html=True)
