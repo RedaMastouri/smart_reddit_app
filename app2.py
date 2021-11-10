@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-
-
 """
 Description
 This is a Natural Language Processing(NLP) Based App useful for basic NLP concepts such as follows;
