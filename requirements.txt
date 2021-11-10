@@ -1,7 +1,7 @@
 altair==4.1.0
 blinker==1.4
 blis==0.7.4
-Cython==0.28.5
+Cython==0.29.24
 bokeh==2.4.1
 folium==0.12.1
 gensim==4.1.2
