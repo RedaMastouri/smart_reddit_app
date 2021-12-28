@@ -1,7 +1,7 @@
 # Smart_Reddit_App {PatientCom}:
 ### Examination of Digital Community Conversations Within Specific Disease States Via Reddit
 
-<img align="center" src="img/logo.png">
+<img align="center" src="banner-github.jpg">
 
 ### - *Vision: 
 Development of a repeatable process for the analysis of Reddit conversations
